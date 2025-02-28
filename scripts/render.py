@@ -16,7 +16,7 @@ def process_images(images_folder, labels_folder, output_folder, resize_dims, mod
     images = get_image_files(images_folder)
     if not images:
         return
-    main_font, legend_font = load_fonts(main_size=32 if mode == "bounding_box" else 26)
+    main_font, legend_font = load_fonts(main_size=32 if mode == "detection" else 26)
     img_mode = "cv2" if mode == "segmentation" else "pil"
     for image_path in images:
         label_file = labels_folder / (image_path.stem + '.txt')
@@ -28,7 +28,7 @@ def process_images(images_folder, labels_folder, output_folder, resize_dims, mod
         img = resize_image(img, resize_dims, mode=img_mode)
         if mode == "segmentation":
             img_with_vis = draw_segmentation_masks(img, labels, class_map, gt, main_font, legend_font)
-        elif mode == "bounding_box":
+        elif mode == "detection":
             img_with_vis = draw_bounding_boxes(img, labels, class_map, gt, main_font, legend_font)
         else:
             raise ValueError(f"Unknown mode: {mode}")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument("images_folder", help="Path to images folder.")
     parser.add_argument("labels_folder", help="Path to labels folder.")
     parser.add_argument("output_folder", help="Path to output folder.")
-    parser.add_argument("--mode", choices=["segmentation", "bounding_box"], default="segmentation",
+    parser.add_argument("--mode", choices=["segmentation", "detection"], default="segmentation",
                         help="Visualization mode: 'segmentation' or 'bounding_box'.")
     parser.add_argument("--gt", action='store_true', help="Use ground truth labels (no confidence scores).")
     parser.add_argument("--resize", default="None", help="Resize images to 'widthxheight' or 'None'.")
